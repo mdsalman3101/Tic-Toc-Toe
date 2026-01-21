@@ -60,3 +60,49 @@ body{
 .hide{
     display: none;
 }
+
+
+/* media quary  */
+/* Mobile devices (Android phones) */
+@media (max-width: 600px) {
+
+    body{
+        background-color: aquamarine;
+        text-align: center;
+    }
+
+    .container{
+        height: auto;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .game{
+        height: 90vmin;
+        width: 90vmin;
+        gap: 2vmin;
+    }
+
+    .box{
+        height: 28vmin;
+        width: 28vmin;
+        font-size: 10vmin;
+        border-radius: 0.8rem;
+    }
+
+    #reset-btn,
+    #new-game{
+        padding: 0.8rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    #msg{
+        font-size: 2rem;
+    }
+
+    .msg-container{
+        height: auto;
+        margin-bottom: 1rem;
+    }
+}
