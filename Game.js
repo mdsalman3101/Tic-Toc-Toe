@@ -1,9 +1,24 @@
-let boxes = document.querySelectorAll(".box");
-let resetBtn = document.querySelector("#reset-btn");
-let NewGameBtn = document.querySelector("#new-game");
-let msgContainer= document.querySelector(".msg-container");
-let msg =document.querySelector("#msg");
-let turn = true; // x, o
+// ===================================
+// Tic Tac Toe — Game Logic
+// ===================================
+
+const boxes = document.querySelectorAll(".box");
+const resetBtn = document.querySelector("#reset-btn");
+const newGameBtn = document.querySelector("#new-game");
+const msgOverlay = document.querySelector("#msg-overlay");
+const msgEyebrow = document.querySelector("#msg-eyebrow");
+const msg = document.querySelector("#msg");
+const turnIndicator = document.querySelector("#turn-indicator");
+const turnDot = turnIndicator.querySelector(".turn-dot");
+const turnText = document.querySelector("#turn-text");
+const scoreXEl = document.querySelector("#score-x");
+const scoreOEl = document.querySelector("#score-o");
+const scoreDrawEl = document.querySelector("#score-draw");
+
+let turnIsX = true; // true => X's turn, false => O's turn
+let gameOver = false;
+
+const scores = { X: 0, O: 0, draw: 0 };
 
 const winPatterns = [
     [0, 1, 2],
@@ -16,79 +31,108 @@ const winPatterns = [
     [6, 7, 8],
 ];
 
-boxes.forEach((box)=> {
-    box.addEventListener("click", ()=>{
-        if(turn){
-            box.innerHTML="O";
-            turn = false;
-        }else{
-            box.innerHTML= "X";
-            turn = true;
-        }
-        box.disabled= true;
-        checkWinner();
+const updateTurnIndicator = () => {
+    if (turnIsX) {
+        turnDot.classList.remove("o-dot");
+        turnText.textContent = "Player X's turn";
+    } else {
+        turnDot.classList.add("o-dot");
+        turnText.textContent = "Player O's turn";
+    }
+};
+
+const placeMark = (box) => {
+    const mark = turnIsX ? "X" : "O";
+    box.textContent = mark;
+    box.classList.add(turnIsX ? "mark-x" : "mark-o");
+    box.disabled = true;
+    turnIsX = !turnIsX;
+    updateTurnIndicator();
+};
+
+const disableBoxes = () => {
+    boxes.forEach((box) => (box.disabled = true));
+};
+
+const enableBoxes = () => {
+    boxes.forEach((box) => {
+        box.disabled = false;
+        box.textContent = "";
+        box.classList.remove("mark-x", "mark-o", "win-cell");
     });
-});
-const disableboxes = ()=>{
-    for(let box of boxes){
-        box.disabled=true;
-    }
 };
 
-const resetGame = ()=>{
-    turn = true;
-    enableBoxes();
-    msgContainer.classList.add("hide");
-};
-const enableBoxes = ()=>{
-    for(let box of boxes){
-        box.disabled= false;
-        box.innerHTML="";
-    }
+const highlightWin = (pattern) => {
+    pattern.forEach((index) => boxes[index].classList.add("win-cell"));
 };
 
-const showWinner = (winner)=> {
-     msg.innerHTML =`Congratulation, Winner is ${winner}`;
-     msgContainer.classList.remove("hide");
-     disableboxes();
+const updateScoreboard = () => {
+    scoreXEl.textContent = scores.X;
+    scoreOEl.textContent = scores.O;
+    scoreDrawEl.textContent = scores.draw;
 };
+
+const showOverlay = (eyebrowText, message) => {
+    msgEyebrow.textContent = eyebrowText;
+    msg.textContent = message;
+    msgOverlay.classList.remove("hide");
+};
+
+const showWinner = (winner, pattern) => {
+    gameOver = true;
+    scores[winner] += 1;
+    updateScoreboard();
+    highlightWin(pattern);
+    disableBoxes();
+    showOverlay("Game Over", `Player ${winner} wins!`);
+};
+
+const showDraw = () => {
+    gameOver = true;
+    scores.draw += 1;
+    updateScoreboard();
+    disableBoxes();
+    showOverlay("Game Over", "It's a draw!");
+};
+
 const checkWinner = () => {
-    let isDraw = true;
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        const valA = boxes[a].textContent;
+        const valB = boxes[b].textContent;
+        const valC = boxes[c].textContent;
 
-    for (let pattern of winPatterns) {
-        let posVal1 = boxes[pattern[0]].innerHTML;
-        let posVal2 = boxes[pattern[1]].innerHTML;
-        let posVal3 = boxes[pattern[2]].innerHTML;
-
-        if (posVal1 !== "" && posVal2 !== "" && posVal3 !== "") {
-            if (posVal1 === posVal2 && posVal2 === posVal3) {
-                showWinner(posVal1);
-                return; // winner mil gaya → yahin stop
-            }
+        if (valA && valA === valB && valB === valC) {
+            showWinner(valA, pattern);
+            return;
         }
     }
 
-    // agar koi box khaali hai to draw nahi
-    for (let box of boxes) {
-        if (box.innerHTML === "") {
-            isDraw = false;
-            break;
-        }
-    }
-
-    // sab bhare hue + koi winner nahi
-    if (isDraw) {
+    const isBoardFull = Array.from(boxes).every((box) => box.textContent !== "");
+    if (isBoardFull) {
         showDraw();
     }
 };
-const showDraw = () => {
-    msg.innerHTML = "Match Draw!";
-    msgContainer.classList.remove("hide");
-    disableboxes();
+
+const resetBoard = () => {
+    turnIsX = true;
+    gameOver = false;
+    enableBoxes();
+    updateTurnIndicator();
+    msgOverlay.classList.add("hide");
 };
-NewGameBtn.addEventListener("click", resetGame);
-resetBtn.addEventListener("click", resetGame);
 
+boxes.forEach((box) => {
+    box.addEventListener("click", () => {
+        if (gameOver || box.textContent !== "") return;
+        placeMark(box);
+        checkWinner();
+    });
+});
 
+newGameBtn.addEventListener("click", resetBoard);
+resetBtn.addEventListener("click", resetBoard);
 
-
+// Initial state
+updateTurnIndicator();
+updateScoreboard();

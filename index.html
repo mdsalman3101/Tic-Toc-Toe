@@ -2,33 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Toc Toe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="msg-container hide">
-        <p id="msg">Winner</p>
-        <button id="new-game">New Game</button>
-    
-    </div>
+
     <main>
-        <h1>Tic Toc Toe</h1>
-        <div class="container">
-            <div class="game">
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-                <button class="box"></button>
-            </div>
+        <header class="top">
+            <p class="eyebrow">Two Player</p>
+            <h1>Tic <span class="accent-x">Tac</span> Toe</h1>
+        </header>
+
+        <div class="turn-indicator" id="turn-indicator">
+            <span class="turn-dot x-dot"></span>
+            <span id="turn-text">Player X's turn</span>
         </div>
+
+        <div class="board" id="board">
+            <button class="box" data-index="0"></button>
+            <button class="box" data-index="1"></button>
+            <button class="box" data-index="2"></button>
+            <button class="box" data-index="3"></button>
+            <button class="box" data-index="4"></button>
+            <button class="box" data-index="5"></button>
+            <button class="box" data-index="6"></button>
+            <button class="box" data-index="7"></button>
+            <button class="box" data-index="8"></button>
+        </div>
+
         <button id="reset-btn">Reset Game</button>
+
+        <footer class="score-board">
+            <div class="score x-score">
+                <span class="score-label">Player X</span>
+                <span class="score-value" id="score-x">0</span>
+            </div>
+            <div class="score draw-score">
+                <span class="score-label">Draws</span>
+                <span class="score-value" id="score-draw">0</span>
+            </div>
+            <div class="score o-score">
+                <span class="score-label">Player O</span>
+                <span class="score-value" id="score-o">0</span>
+            </div>
+        </footer>
     </main>
-    <script  src="Game.js"></script>
+
+    <div class="msg-overlay hide" id="msg-overlay">
+        <div class="msg-card">
+            <p class="msg-eyebrow" id="msg-eyebrow">Game Over</p>
+            <p id="msg">Winner</p>
+            <button id="new-game">Play Again</button>
+        </div>
+    </div>
+
+    <script src="Game.js"></script>
 </body>
 </html>
